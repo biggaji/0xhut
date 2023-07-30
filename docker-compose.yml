@@ -8,22 +8,24 @@ services:
       - auth-mongo-docker-service-network
     ports:
       -  "3000:3000"
+    environment:
+      MONGO_ENDPOINT: ${MONGO_ENDPOINT}
 
   mongo-service:
     image: mongo
     restart: always
     volumes:
-      - mongo-db-data-v
+      - mongo-db-data-v:/etc/mongo
     networks:
       - auth-mongo-docker-service-network
     ports:
       - "27017:27017"
     environment:
-      - MONGO_USER=${MONGO_USER}
-      - MONGO_PASSWORD=${MONGO_PASSWORD}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
 
 volumes:
-  mongo-db-data-v
+  mongo-db-data-v:
 
 networks:
   auth-mongo-docker-service-network:
