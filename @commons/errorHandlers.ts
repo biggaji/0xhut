@@ -7,22 +7,12 @@ class BaseError extends Error {
   }
 }
 
-class BadUserInputError extends BaseError {
-  code: number;
-  codeName: ErrorCodeName
-  constructor(message: string) {
-    super(message)
-    this.code = 401
-    this.codeName = ErrorCodeName.BAD_USER_INPUT
-  }
-}
-
 class BadRequestError extends BaseError {
   code: number;
   codeName: ErrorCodeName
   constructor(message: string) {
     super(message)
-    this.code = 401
+    this.code = 400
     this.codeName = ErrorCodeName.BAD_REQUEST
   }
 }
@@ -47,22 +37,12 @@ class ForbiddenError extends BaseError {
   }
 }
 
-class UnAuthenticatedError extends BaseError {
-  code: number;
-  codeName: ErrorCodeName
-  constructor(message: string) {
-    super(message)
-    this.code = 403
-    this.codeName = ErrorCodeName.UNAUTHENTICATED
-  }
-}
-
 class UnAuthorizedError extends BaseError {
   code: number;
   codeName: ErrorCodeName
   constructor(message: string) {
     super(message)
-    this.code = 403
+    this.code = 401
     this.codeName = ErrorCodeName.UNAUTHORIZED
   }
 }
@@ -77,4 +57,4 @@ class InternalServerError extends BaseError {
   }
 }
 
-export { InternalServerError, BadRequestError, BadUserInputError, UnAuthenticatedError, UnAuthorizedError, ForbiddenError, NotFoundError };
+export { InternalServerError, BadRequestError, UnAuthorizedError, ForbiddenError, NotFoundError };

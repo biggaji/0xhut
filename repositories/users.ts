@@ -1,7 +1,5 @@
 import { UserModel as User } from "../models/users.model.js";
 import { CreateUserOption } from "../types/sharedTypes.js";
-import { BadRequestError, BadUserInputError } from "../@commons/errorHandlers.js";
-import * as bcrypt from "bcryptjs";
 
 /**
  * @class UserRepository

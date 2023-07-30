@@ -1,5 +1,5 @@
 import { CreateAuthServerOption } from "../types/sharedTypes.js";
-import { BadRequestError, BadUserInputError } from "../@commons/errorHandlers.js";
+import { BadRequestError } from "../@commons/errorHandlers.js";
 import * as bcrypt from "bcryptjs";
 import AuthServerRepository from "../repositories/authServer.js";
 
@@ -20,15 +20,15 @@ export default class AuthServerService {
       const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
       
       if (!name || name === "") {
-        throw new BadUserInputError("A server name is required");
+        throw new BadRequestError("A server name is required");
       }
 
       if (!email || email === "" || !emailRegex.test(email)) {
-        throw new BadUserInputError("Enter a valid email address");
+        throw new BadRequestError("Enter a valid email address");
       }
 
       if (!opts.password || opts.password === "" || !passwordRegex.test(opts.password)) {
-        throw new BadUserInputError("A secure password must be more than 8 characters long and contains numeric and non-numeric characters");
+        throw new BadRequestError("A secure password must be more than 8 characters long and contains numeric and non-numeric characters");
       }
 
       // check if auth server exist already

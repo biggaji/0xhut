@@ -1,5 +1,5 @@
 import { CreateUserOption } from "../types/sharedTypes.js";
-import { BadRequestError, BadUserInputError } from "../@commons/errorHandlers.js";
+import { BadRequestError } from "../@commons/errorHandlers.js";
 import * as bcrypt from "bcryptjs";
 import UserRepository from "../repositories/users.js";
 
@@ -20,37 +20,37 @@ export default class UserService {
       const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
       
       if (!firstName || firstName === "") {
-        throw new BadUserInputError("FirstName is required");
+        throw new BadRequestError("FirstName is required");
       }
 
       if (!lastName || lastName === "") {
-        throw new BadUserInputError("lastName is required");
+        throw new BadRequestError("lastName is required");
       }
 
       if (!email || email === "" || !emailRegex.test(email)) {
-        throw new BadUserInputError("Enter a valid email address");
+        throw new BadRequestError("Enter a valid email address");
       }
 
       if (!opts.password || opts.password === "" || !passwordRegex.test(opts.password)) {
-        throw new BadUserInputError("A secure password must be more than 8 characters long and contains numeric and non-numeric characters");
+        throw new BadRequestError("A secure password must be more than 8 characters long and contains numeric and non-numeric characters");
       }
 
       
       if (dob) {
         if (dob === "" || !(new Date(dob) instanceof Date)) {
-          throw new BadUserInputError("Enter a valid date format");
+          throw new BadRequestError("Enter a valid date format");
         }
       }
 
       if (country) {
         if (country === "") {
-          throw new BadUserInputError("Enter a valid country name");
+          throw new BadRequestError("Enter a valid country name");
         }
       }
 
       if (languages) {
         if (languages.length === 0) {
-          throw new BadUserInputError("Choose valid spoken languages");
+          throw new BadRequestError("Choose valid spoken languages");
         }
       }
 
