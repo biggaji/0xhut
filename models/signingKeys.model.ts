@@ -8,7 +8,7 @@ const SigningKeySchema = new Schema({
     type: String,
     default: "server:read"
   },
-  server: { type: mongoose.Types.ObjectId, ref: 'authServer'}
+  server: { type: mongoose.Types.ObjectId, ref: 'authServer', required: true }
 }, { timestamps: true });
 
 export const SigningKeyModel = mongoose.model('signingKey', SigningKeySchema);
