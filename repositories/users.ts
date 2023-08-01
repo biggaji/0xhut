@@ -30,9 +30,13 @@ export default class UserRepository {
     }
   }
 
-  async requestUserInfo(id: string) {
+  async requestUserInfo(identifier: "id" | "email", key: string) {
     try {
-      
+      if (identifier === "id") {
+        return await User.findOne({ _id: key });     
+      } else {
+        return await User.findOne({ email: key });
+      }
     } catch (error) {
       throw error;
     }

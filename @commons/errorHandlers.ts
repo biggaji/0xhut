@@ -57,4 +57,4 @@ class InternalServerError extends BaseError {
   }
 }
 
-export { InternalServerError, BadRequestError, UnAuthorizedError, ForbiddenError, NotFoundError };
+export { InternalServerError, BadRequestError, UnAuthenticatedError, UnAuthorizedError, ForbiddenError, NotFoundError };

@@ -1,5 +1,5 @@
-import { CreateUserOption } from "../types/sharedTypes.js";
-import { BadRequestError } from "../@commons/errorHandlers.js";
+import { CreateUserOption, HydratedUser } from "../types/sharedTypes.js";
+import { BadRequestError, ForbiddenError, NotFoundError } from "../@commons/errorHandlers.js";
 import * as bcrypt from "bcryptjs";
 import UserRepository from "../repositories/users.js";
 
@@ -59,9 +59,8 @@ export default class UserService {
       const userExist = await userRepository.checkUserExist(email);
       
       if (userExist) {
-        throw new BadRequestError("Can't create an account twice, user exist already");
-      }
-      
+        throw new ForbiddenError("Can't create an account twice, user exist already");
+      }     
       // user doesn't have an account
       // hash password
 
@@ -76,9 +75,51 @@ export default class UserService {
     }
   }
 
+  async authenticateUser(opts: { email: string, password: string }) {
+    try {
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+      if (!opts.email || opts.email === "" || !emailRegex.test(opts.email)) {
+        throw new BadRequestError("Enter a valid email address");
+      }
+
+      const userExist = await userRepository.checkUserExist(opts.email);
+      if (!userExist) {
+        throw new NotFoundError(`User not with email ' ${opts.email} 'found`);
+      }
+
+      const user = await userRepository.requestUserInfo("email", opts.email);
+
+      // validate password
+      const passwordIsValid = await bcrypt.compare(opts.password, user!.password);
+
+      if (!passwordIsValid) {
+        throw new BadRequestError("Invalid credentials");
+      }
+
+      // return an Hydrated user object to be used for tokenization
+      const hydrayedUser: HydratedUser = {
+        id: user?._id,
+        firstName: user!.firstName,
+        lastName: user!.lastName,
+        email: user!.email
+      };
+
+      return hydrayedUser;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async requestUserInfo(id: string) {
     try {
+      const user = await userRepository.requestUserInfo("id", id);
       
+      if (!user) {
+        throw new NotFoundError(`User with id '${id}' not found`);
+      }
+
+      return user;
     } catch (error) {
       throw error;
     }

@@ -14,7 +14,28 @@ interface CreateAuthServerOption {
   password: string
 }
 
-interface User {
+interface CreateSharedAccessTokenOption {
+  user: UserDocument,
+  server: AuthServerDocument,
+  hydratedServer: HydratedServer
+}
+
+interface HydratedServer {
+  scope: any,
+  name: string,
+  id: any,
+  serverSigningKey: string
+}
+
+interface HydratedUser {
+  firstName: string,
+  lastName: string,
+  email: string,
+  id: any,
+}
+
+interface UserDocument {
+  _id: any
   firstName: string,
   lastName: string,
   email: string,
@@ -26,17 +47,18 @@ interface User {
   updatedAt: Date
 }
 
-interface AuthServer {
+interface AuthServerDocument {
+  _id: any,
   name: string,
   email: string,
   password: string,
-  signingKey: SigningKey,
   createdAt: Date,
   updatedAt: Date
 }
 
-interface SigningKey {
+interface SigningKeyDocument {
   key: string,
+  _id: any,
   scope: SigningKeyScope,
   revoked: boolean,
   revokedAt: Date,
@@ -56,8 +78,7 @@ enum ErrorCodeName {
   UNAUTHENTICATED="UNAUTHENTICATED",
   NOT_FOUND="NOT_FOUND",
   BAD_REQUEST="BAD_REQUEST",
-  BAD_USER_INPUT="BAD_USER_INPUT",
   INTERNAL_SERVER_ERROR="INTERNAL_SERVER_ERROR",
 }
 
-export { CreateAuthServerOption, CreateUserOption, User, AuthServer, SigningKey, SigningKeyScope, SharedAccessToken, ErrorCodeName };
+export { CreateAuthServerOption, CreateUserOption, AuthServerDocument, SigningKeyDocument, SigningKeyScope, SharedAccessToken, ErrorCodeName, CreateSharedAccessTokenOption, HydratedServer, UserDocument, HydratedUser };
