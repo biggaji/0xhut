@@ -15,7 +15,7 @@ export default class SigningKeyService {
       throw error;
     }
   }
-
+  
   // async requestNewSigningKeyForServer(serverId: string) {
   //   // find and revoke old signing key
   //   // issue` a new one
