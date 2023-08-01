@@ -1,10 +1,11 @@
+import mongoose from "mongoose";
 import { ForbiddenError, NotFoundError } from "../@commons/errorHandlers.js";
 import { SigningKeyModel as SigningKey } from "../models/signingKeys.model.js";
 import { SigningKeyScope } from "../types/sharedTypes.js";
-import AuthServerRepository from "./authServer.js";
+// import AuthServerRepository from "./authServer.js";
 import * as crypto from "crypto";
 
-const authServerRepository = new AuthServerRepository();
+// const authServerRepository = new AuthServerRepository();
 /**
  * @class SigningKeyRepository
  * @description Manages the signing key lifecycle
@@ -20,12 +21,11 @@ export default class SigningKeyRepository {
    */
   async issueSigningKeyToAuthServer(authServerId: any, scope: SigningKeyScope) {
     try {
-      const server = await authServerRepository.retrieveServerData(authServerId);
       const generatedSigningKey = await this.generateSigningKeyForAuthServer(authServerId);
       const signingKey = new SigningKey({
         key: generatedSigningKey,
         scope,
-        server,
+        server: new mongoose.Types.ObjectId(authServerId),
         expiresAt: new Date().setHours((24 * 7)) //7days
       });
 
