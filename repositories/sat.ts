@@ -49,7 +49,7 @@ export default class SharedAccessTokenRepository {
     return token;
   }
 
-  async revokeSharedAccessToken() {}
+  async revokeSharedAccessToken(sat: string) {}
 
-  async deleteSharedAccessToken() {}
+  async deleteSharedAccessToken(sat: string) {}
 }

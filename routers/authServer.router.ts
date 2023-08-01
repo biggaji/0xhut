@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { handleAuthServerCreation } from "../controllers/authServers.controller";
+import { handleAuthServerCreation } from "../controllers/authServers.controller.js";
 
 const authServerRouter = Router();
 

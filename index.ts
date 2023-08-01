@@ -22,7 +22,7 @@ app.get('/', function(req: Request, response: Response, next: NextFunction) {
   return response.json({ msg: 'hello world'})
 })
 app.use('/id', userAuthRouter);
-app.use('/identify', authServerRouter);
+app.use('/auth', authServerRouter);
 
 // Global error catcher and handler middleware
 app.use(function(error: Error, request: Request, response: Response, next: NextFunction) {

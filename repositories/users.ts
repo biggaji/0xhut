@@ -1,7 +1,5 @@
 import { UserModel as User } from "../models/users.model.js";
 import { CreateUserOption } from "../types/sharedTypes.js";
-import { BadRequestError, BadUserInputError } from "../@commons/errorHandlers.js";
-import * as bcrypt from "bcryptjs";
 
 /**
  * @class UserRepository
@@ -32,9 +30,13 @@ export default class UserRepository {
     }
   }
 
-  async requestUserInfo(id: string) {
+  async requestUserInfo(identifier: "id" | "email", key: string) {
     try {
-      
+      if (identifier === "id") {
+        return await User.findOne({ _id: key });     
+      } else {
+        return await User.findOne({ email: key });
+      }
     } catch (error) {
       throw error;
     }

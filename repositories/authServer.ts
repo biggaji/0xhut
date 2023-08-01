@@ -108,13 +108,13 @@ export default class AuthServerRepository {
    * @param hydratedServer 
    * @returns string
    */
-  async requestToIssueSharedAccessTokenForUser(user: UserDocument,  server: AuthServerDocument, hydratedServer: HydratedServer) {
+  async issueSharedAccessTokenToUser(user: UserDocument,  server: AuthServerDocument, hydratedServer: HydratedServer) {
     try {
       const serverCanIssue = await this.authServerCanIssueSharedAccessToken(hydratedServer.scope);
       
       if (serverCanIssue) {
         // check if signing token is not revoked yet
-        const signingKeyRevokedState = await signingKeyRepository.signingKeyIsRevoked(hydratedServer.id);
+        const signingKeyRevokedState = await signingKeyRepository.isSigningKeyRevoked(hydratedServer.id);
         if (signingKeyRevokedState) {
           throw new ForbiddenError("Server signing key is revoked, generated a new one");
         }
@@ -128,6 +128,4 @@ export default class AuthServerRepository {
       throw error;
     }
   }
-
-  async requestToRevokeUserSharedAccessToken(userId: string) {}
 }
