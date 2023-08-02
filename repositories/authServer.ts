@@ -1,7 +1,6 @@
 import { ForbiddenError, NotFoundError, UnAuthorizedError } from "../@commons/errorHandlers.js";
 import { AuthServerModel as AuthServer } from "../models/authServers.model.js";
-import { UserModel } from "../models/users.model.js";
-import { AuthServerDocument, CreateAuthServerOption, HydratedServer, SigningKeyScope, UserDocument } from "../types/sharedTypes.js";
+import { CreateAuthServerOption, HydratedServer, SigningKeyScope, UserDocument } from "../types/sharedTypes.js";
 import SigningKeyRepository from "./signingKey.js";
 import SharedAccessTokenRepository from "./sat.js";
 
@@ -104,11 +103,10 @@ export default class AuthServerRepository {
 
   /**
    * @param user 
-   * @param server 
    * @param hydratedServer 
    * @returns string
    */
-  async issueSharedAccessTokenToUser(user: UserDocument,  server: AuthServerDocument, hydratedServer: HydratedServer) {
+  async issueSharedAccessTokenToUser(user: UserDocument, hydratedServer: HydratedServer) {
     try {
       const serverCanIssue = await this.authServerCanIssueSharedAccessToken(hydratedServer.scope);
       
@@ -119,7 +117,7 @@ export default class AuthServerRepository {
           throw new ForbiddenError("Server signing key is revoked, generated a new one");
         }
         // issue token for user
-        const tokenIssurance = await sharedAccessRepository.createSharedAccessToken({ user, server, hydratedServer }) 
+        const tokenIssurance = await sharedAccessRepository.createSharedAccessToken({ user, hydratedServer }) 
         return { sharedAccessToken: tokenIssurance.token };
       } else {
         throw new UnAuthorizedError("Server can't issue SAT for user, update your server scope to either 'server:write' or 'server:read:write'");

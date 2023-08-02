@@ -70,7 +70,7 @@ export default class AuthServerService {
       scope: signingKeyData.scope,
       serverSigningKey: signingKeyData.key
     }
-    const sharedAccessToken = await authServerRepository.issueSharedAccessTokenToUser(user, server!, hydratedServer)
+    const sharedAccessToken = await authServerRepository.issueSharedAccessTokenToUser(user, hydratedServer)
     return sharedAccessToken.sharedAccessToken;
   }
 }
