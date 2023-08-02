@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { SatModel } from "../models/sats.model.js";
 import { CreateSharedAccessTokenOption } from "../types/sharedTypes.js";
 import jwt from "jsonwebtoken";
@@ -14,7 +15,7 @@ export default class SharedAccessTokenRepository {
    */
   async createSharedAccessToken(opts: CreateSharedAccessTokenOption) {
     try {
-      const { user, server, hydratedServer } = opts;
+      const { user, hydratedServer } = opts;
       const sharedAccessToken = await this.generateSharedAccessToken({
         email: user.email,
         firstName: user.firstName,
@@ -24,8 +25,8 @@ export default class SharedAccessTokenRepository {
       }, hydratedServer.serverSigningKey);
 
       const satDocument = new SatModel({
-        issuedToUser: user,
-        issuingServer: server,
+        issuedToUser: new mongoose.Types.ObjectId(user._id),
+        issuingServer: new mongoose.Types.ObjectId(hydratedServer.id) ,
         token: sharedAccessToken
       });
 

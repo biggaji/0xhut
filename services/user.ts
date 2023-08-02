@@ -85,7 +85,7 @@ export default class UserService {
 
       const userExist = await userRepository.checkUserExist(opts.email);
       if (!userExist) {
-        throw new NotFoundError(`User not with email ' ${opts.email} 'found`);
+        throw new NotFoundError(`User with email ' ${opts.email} ' not found`);
       }
 
       const user = await userRepository.requestUserInfo("email", opts.email);
@@ -98,14 +98,14 @@ export default class UserService {
       }
 
       // return an Hydrated user object to be used for tokenization
-      const hydrayedUser: HydratedUser = {
+      const hydratedUser: HydratedUser = {
         id: user?._id,
         firstName: user!.firstName,
         lastName: user!.lastName,
         email: user!.email
       };
 
-      return hydrayedUser;
+      return hydratedUser;
     } catch (error) {
       throw error;
     }
