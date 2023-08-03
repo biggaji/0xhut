@@ -15,3 +15,14 @@ export const handleAuthServerCreation = async (req: Request, res: Response, next
     throw error;
   }
 }
+
+export const handleIssuingSharedAccessToken = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userCred = req.body;
+    const serverId = req.identity;
+    const sat = await authServerService.issueSharedAccessTokenToUser(userCred, serverId as unknown as string)
+    return res.status(201).json({ sharedAccessToken: sat });
+  } catch (error) {
+    next(error);
+  }
+}

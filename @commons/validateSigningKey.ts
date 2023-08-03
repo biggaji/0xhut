@@ -1,8 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import SigningKeyService from "../services/signingKey.js";
 import { BadRequestError, ForbiddenError } from "./errorHandlers.js";
+import SigningKeyRepository from "../repositories/signingKey.js";
 
 const signingKeyService = new SigningKeyService();
+const signingKeyRepository = new SigningKeyRepository();
 
 /**
  * @function validateAuthServerSigningKey
@@ -13,7 +15,7 @@ const signingKeyService = new SigningKeyService();
 
 export async function validateAuthServerSigningKey(req: Request, res: Response, next: NextFunction) {
   try {
-    const signingKey = req.headers.authorization || req.headers.x_signing_k;
+    const signingKey = req.headers["x-signing-k"];
 
     if (!signingKey || signingKey === "" || typeof signingKey === "object") {
       throw new BadRequestError(`Provide server's signing key`);
@@ -21,15 +23,15 @@ export async function validateAuthServerSigningKey(req: Request, res: Response, 
 
     // validate key
     const signingKeyIsValid = await signingKeyService.validateSigningKey(signingKey);
-
-    if (signingKeyIsValid) {
-      req.identity = signingKey;
-      next();
-    } else {
+    const serverFromSigningKey = await signingKeyRepository.getAuthServerBySigningKey(signingKey);
+    if (!signingKeyIsValid) {
       throw new ForbiddenError(`Invalid or expired signing key provided`);
     }
+
+    req.identity = serverFromSigningKey;
+    next();
   } catch (error) {
-    console.error(`An error occured while validating auth server signing key`);
+    console.error(`An error occured while validating auth server signing key`, error);
     next(error);
   }
 }

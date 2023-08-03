@@ -57,20 +57,24 @@ export default class AuthServerService {
   }
 
   async issueSharedAccessTokenToUser(payload: { email: string, password: string}, serverId: string) {
-    // authenticate the user if not authenticated
-    const authUser = await userService.authenticateUser({ email: payload.email, password: payload.password });
-
-    // user, server, hydratedServer
-    const user = await userService.requestUserInfo(authUser.id);
-    const server = await authServerRepository.retrieveServerData(serverId);
-    const signingKeyData = await signingKeyRepository.retrieveSigningKeyForServer(serverId);
-    const hydratedServer: HydratedServer = {
-      id: server!._id,
-      name: server!.name,
-      scope: signingKeyData.scope,
-      serverSigningKey: signingKeyData.key
+    try {
+      // authenticate the user if not authenticated
+      const authUser = await userService.authenticateUser({ email: payload.email, password: payload.password });
+  
+      // user, server, hydratedServer
+      const user = await userService.requestUserInfo(authUser.id);
+      const server = await authServerRepository.retrieveServerData(serverId);
+      const signingKeyData = await signingKeyRepository.retrieveSigningKeyForServer(serverId);
+      const hydratedServer: HydratedServer = {
+        id: server!._id,
+        name: server!.name,
+        scope: signingKeyData.scope,
+        serverSigningKey: signingKeyData.key
+      }
+      const sharedAccessToken = await authServerRepository.issueSharedAccessTokenToUser(user, hydratedServer);
+      return sharedAccessToken.sharedAccessToken;   
+    } catch (error) {
+      throw error;
     }
-    const sharedAccessToken = await authServerRepository.issueSharedAccessTokenToUser(user, hydratedServer)
-    return sharedAccessToken.sharedAccessToken;
   }
 }
