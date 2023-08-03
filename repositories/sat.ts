@@ -45,8 +45,8 @@ export default class SharedAccessTokenRepository {
 
   private async generateSharedAccessToken(payload: { sub: string, email: string, firstName: string, lastName: string , issuingServerId: string}, issuingServerSigningKey: string) {
     const objectToBeTokenized = payload;
-    const oneHourExpiryTime = 60 * 60; //1hr
-    const token = jwt.sign(objectToBeTokenized, issuingServerSigningKey, { expiresIn: oneHourExpiryTime, issuer: payload.issuingServerId });
+    const oneHourExpiryTime = 60 * 120; //2hr
+    const token = jwt.sign(objectToBeTokenized, issuingServerSigningKey, { expiresIn: oneHourExpiryTime, issuer: payload.issuingServerId.toString() });
     return token;
   }
 

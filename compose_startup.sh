@@ -5,3 +5,6 @@ sudo docker compose down -v
 
 # start, build and run containers in detach mode
 sudo docker compose up --build -d
+
+# list running containers
+sudo docker ps

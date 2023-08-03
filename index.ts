@@ -27,6 +27,7 @@ app.use('/auth', authServerRouter);
 
 // Global error middleware, handles and reformats error object
 app.use(function(error: Error, request: Request, response: Response, next: NextFunction) {
+  console.log(error);
   const error_json_formater = ErrorHelper.ProcessError(error);
   return response.status(error_json_formater.code).json(error_json_formater);
 });

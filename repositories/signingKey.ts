@@ -63,8 +63,22 @@ export default class SigningKeyRepository {
     }
   }
 
-  async isSigningKeyRevoked(serverId: string) {
-    return ((await SigningKey.findOne({ server: serverId }))?.revoked === true) ? true : false;
+  async getAuthServerBySigningKey(signingKey: string) {
+    try {
+      const signKey = await SigningKey.findOne({ key: signingKey});
+
+      if (!signKey) {
+        throw new NotFoundError(`Signing key not found`);
+      }
+      
+      return signKey?.server;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async isSigningKeyRevoked(key: string) {
+    return ((await SigningKey.findOne({ key: key }))?.revoked === true) ? true : false;
   }
 
   async validateSigningKey(key: string) {
@@ -76,7 +90,7 @@ export default class SigningKeyRepository {
       }
       // check if it is not revoked
       await this.isSigningKeyRevoked(signingKeyDocument.key);
-      // check for expiry
+      // // check for expiry
       const now = new Date();
       if (now > signingKeyDocument.expiresAt!) {
         throw new ForbiddenError("Signing key has expired, can't be validated");

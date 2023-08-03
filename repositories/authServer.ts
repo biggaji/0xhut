@@ -54,7 +54,8 @@ export default class AuthServerRepository {
   async retrieveServerData(id: string) {
     try {
       // first check if server exist
-      if (!(await this.checkServerExist("id", id))) {
+      const serverExist = await this.checkServerExist("id", id);
+      if (!serverExist) {
         throw new NotFoundError(`server with id '${id}' not found`);
       }
 
@@ -79,7 +80,7 @@ export default class AuthServerRepository {
           server = await AuthServer.findOne({ email: key });
           break;
         case "id":
-          server = await AuthServer.findOne({ id: key });
+          server = await AuthServer.findOne({ _id: key });
           break;
       };
       
@@ -112,7 +113,7 @@ export default class AuthServerRepository {
       
       if (serverCanIssue) {
         // check if signing token is not revoked yet
-        const signingKeyRevokedState = await signingKeyRepository.isSigningKeyRevoked(hydratedServer.id);
+        const signingKeyRevokedState = await signingKeyRepository.isSigningKeyRevoked(hydratedServer.serverSigningKey);
         if (signingKeyRevokedState) {
           throw new ForbiddenError("Server signing key is revoked, generated a new one");
         }
