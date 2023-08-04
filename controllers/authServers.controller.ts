@@ -29,10 +29,27 @@ export const handleAuthServerCreation = async (req: Request, res: Response, next
 
 export const handleIssuingSharedAccessToken = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const userCred = req.body;
+    const userCred = req.body; //should be encrypted before passing it here
     const serverId = req.identity;
     const sat = await authServerService.issueSharedAccessTokenToUser(userCred, serverId as unknown as string)
     return res.status(201).json({ sharedAccessToken: sat });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export const handleAuthServerPasswordRecovery = async () => {}
+
+export const handleAuthServerPasswordUpdate = async () => {}
+
+export const handleAuthServerDeletion = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const serverId = req.identity;
+    await authServerService.deleteAuthServer(serverId as unknown as string);
+    return res.status(200).json({
+      success: true,
+      message: 'Auth server deleted successfully'
+    });
   } catch (error) {
     next(error);
   }

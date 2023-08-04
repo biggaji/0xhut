@@ -44,7 +44,6 @@ export default class AuthServerService {
       
       // hash password
       const hashedPwd = await bcrypt.hash(opts.password, 10);
-
       const server = await authServerRepository.createAuthServer({ name, email, password: hashedPwd });
 
       // generate signing key for new server
@@ -73,6 +72,14 @@ export default class AuthServerService {
       }
       const sharedAccessToken = await authServerRepository.issueSharedAccessTokenToUser(user, hydratedServer);
       return sharedAccessToken.sharedAccessToken;   
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteAuthServer(serverId: string) {
+    try {
+      return await authServerRepository.deleteAuthServer(serverId);
     } catch (error) {
       throw error;
     }

@@ -15,3 +15,5 @@ export async function handleCreateUser(req: Request, response: Response, next: N
     next(error);
   }
 }
+
+export async function deleteUserAccount() {}

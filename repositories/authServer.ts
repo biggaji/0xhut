@@ -3,6 +3,7 @@ import { AuthServerModel as AuthServer } from "../models/authServers.model.js";
 import { CreateAuthServerOption, HydratedServer, SigningKeyScope, UserDocument } from "../types/sharedTypes.js";
 import SigningKeyRepository from "./signingKey.js";
 import SharedAccessTokenRepository from "./sat.js";
+import mongoose from "mongoose";
 
 const sharedAccessRepository = new SharedAccessTokenRepository();
 
@@ -123,6 +124,26 @@ export default class AuthServerRepository {
       } else {
         throw new UnAuthorizedError("Server can't issue SAT for user, update your server scope to either 'server:write' or 'server:read:write'");
       }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteAuthServer(serverId: string) {
+    try {
+      const session = await mongoose.startSession();
+      const deleteAuthServerTrx = await session.withTransaction(async function() {
+        const server = await AuthServer.findByIdAndDelete({ _id: serverId }).session(session);
+        if (!server) {
+          throw new NotFoundError("server not found");
+        }
+
+        // delete shared access tokens issued by server and signing key associated
+        await sharedAccessRepository.deleteSharedAccessTokenIssuedByAuthServer(serverId, session);
+        await signingKeyRepository.deleteSigningForAuthServer(serverId, session);
+      });
+
+      await session.endSession();
     } catch (error) {
       throw error;
     }
