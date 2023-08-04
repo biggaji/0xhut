@@ -2,10 +2,8 @@ import mongoose from "mongoose";
 import { ForbiddenError, NotFoundError } from "../@commons/errorHandlers.js";
 import { SigningKeyModel as SigningKey } from "../models/signingKeys.model.js";
 import { SigningKeyScope } from "../types/sharedTypes.js";
-// import AuthServerRepository from "./authServer.js";
 import * as crypto from "crypto";
 
-// const authServerRepository = new AuthServerRepository();
 /**
  * @class SigningKeyRepository
  * @description Manages the signing key lifecycle
@@ -26,7 +24,6 @@ export default class SigningKeyRepository {
         key: generatedSigningKey,
         scope,
         server: new mongoose.Types.ObjectId(authServerId),
-        expiresAt: new Date().setHours((24 * 7)) //7days
       });
 
       await signingKey.save();
@@ -43,8 +40,7 @@ export default class SigningKeyRepository {
    */
   private async generateSigningKeyForAuthServer(authServerId: string) {
     const randomBytes = crypto.randomBytes(16).toString("base64");
-    const expiresAt = new Date().setHours((24 * 7)); //7 days
-    const hashKey = `${authServerId}:${randomBytes}:${expiresAt}`;
+    const hashKey = `${authServerId}:${randomBytes}`;
     return crypto.createHash("sha256").update(hashKey).digest("hex");
   }
   
@@ -90,11 +86,6 @@ export default class SigningKeyRepository {
       }
       // check if it is not revoked
       await this.isSigningKeyRevoked(signingKeyDocument.key);
-      // // check for expiry
-      const now = new Date();
-      if (now > signingKeyDocument.expiresAt!) {
-        throw new ForbiddenError("Signing key has expired, can't be validated");
-      }
 
       return (signingKeyDocument._id) ? true : false;
     } catch (error) {
