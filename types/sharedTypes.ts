@@ -16,8 +16,6 @@ interface CreateAuthServerOption {
 
 interface CreateSharedAccessTokenOption {
   user: UserDocument,
-  // server: AuthServerDocument,
-  // serverId: any,
   hydratedServer: HydratedServer
 }
 

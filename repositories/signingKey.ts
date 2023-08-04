@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { ForbiddenError, NotFoundError } from "../@commons/errorHandlers.js";
+import { NotFoundError } from "../@commons/errorHandlers.js";
 import { SigningKeyModel as SigningKey } from "../models/signingKeys.model.js";
 import { SigningKeyScope } from "../types/sharedTypes.js";
 import * as crypto from "crypto";
@@ -106,11 +106,11 @@ export default class SigningKeyRepository {
     }
   }
 
-  // async renewSigningKey(serverId: string) {
-  //   try {
-      
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }
+  async deleteSigningForAuthServer(serverId: string, session: mongoose.ClientSession | null) {
+    try {
+      return await SigningKey.deleteOne({ server: serverId }).session(session);
+    } catch (error) {
+      throw error;
+    }
+  }
 }

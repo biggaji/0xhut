@@ -4,10 +4,11 @@ if (process.env.NODE_ENV !== "production") {
 }
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
-import startDb from "./@commons/db";
+import startDb from "./@commons/db.js";
 import userAuthRouter from "./routers/user.router.js";
-import authServerRouter from "./routers/authServer.router";
-import ErrorHelper from "./@commons/errorHelper";
+import authServerRouter from "./routers/authServer.router.js";
+import ErrorHelper from "./@commons/errorHelper.js";
+import sharedAccessTokenRouter from "./routers/sat.router.js";
 
 const app = express();
 
@@ -20,10 +21,13 @@ startDb()
 .then();
 
 app.get('/', function(req: Request, response: Response, next: NextFunction) {
-  return response.json({ msg: 'hello world'})
-})
-app.use('/id', userAuthRouter);
-app.use('/auth', authServerRouter);
+  return response.json({ success: true, message: 'Hello World from 0xIdentity'});
+});
+
+app.use('/identity', userAuthRouter);
+app.use('/identity', authServerRouter);
+app.use('/identity', sharedAccessTokenRouter);
+
 
 // Global error middleware, handles and reformats error object
 app.use(function(error: Error, request: Request, response: Response, next: NextFunction) {

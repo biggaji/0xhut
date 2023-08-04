@@ -16,8 +16,8 @@ export default class SigningKeyService {
     }
   }
   
-  // async requestNewSigningKeyForServer(serverId: string) {
-  //   // find and revoke old signing key
-  //   // issue` a new one
-  // }
+  async requestNewSigningKeyForServer(serverId: string) {
+    // find and revoke old signing key
+    // issue` a new one
+  }
 }
